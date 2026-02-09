@@ -5,14 +5,16 @@ using TaskTrackerAPI.Services;
 // C# (Program.cs) - аналог @Configuration в Spring
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавляем сервисы для API и Swagger
+// Добавляем контроллеры и API Explorer
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // Генерирует документ OpenAPI
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=tasks.db")); // Простая БД для демо
 
-builder.Services.AddScoped<TaskService>(); // Аналог @Service в Spring
+// Регистрируем сервис. Это аналог @Service в Spring
+builder.Services.AddScoped<TaskService>();
 
 var app = builder.Build();
 
@@ -33,7 +35,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Пример эндпоинта
+// Важно: подключаем маршрутизацию для контроллеров
+app.MapControllers();
+
+// Пример эндпоинта (можно оставить для теста)
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
