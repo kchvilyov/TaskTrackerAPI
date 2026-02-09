@@ -36,11 +36,15 @@
     *   `PUT /api/tasks/{id}` — Обновить задачу.
     *   `DELETE /api/tasks/{id}` — Удалить задачу.
 5.  **Документация**: Полностью настроен [Swagger UI](http://localhost:5297/swagger/) для тестирования и демонстрации эндпоинтов. 
-6.  **Контейнеризация (опционально)**: Добавлен `Dockerfile` для сборки контейнера приложения.
+6.  **Создание базы данных**: Создайте миграцию и примените её.
+```bash
+  dotnet ef migrations add InitialCreate
+  dotnet ef database update
+```
 7.  **Как запустить**:
 ```bash
-    dotnet restore
-    dotnet run
+  dotnet restore
+  dotnet run
 ```
 
 ### Пример кода: Параллель в создании сервиса
