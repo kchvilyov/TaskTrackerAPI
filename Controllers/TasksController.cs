@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskTrackerAPI.Data;
 using TaskTrackerAPI.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using TaskTrackerAPI.DTOs;
 
 namespace TaskTrackerAPI.Controllers
 {
@@ -53,31 +52,18 @@ namespace TaskTrackerAPI.Controllers
 
         // PUT api/tasks/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(int id, TaskItem updatedTask)
+        public async Task<IActionResult> PutTask(int id, TaskUpdateDto dto)
         {
-            if (id != updatedTask.Id)
-            {
-                return BadRequest(); // ID в пути и в теле не совпадают
-            }
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null) return NotFound();
 
-            _context.Entry(updatedTask).State = EntityState.Modified;
+            task.Title = dto.Title;
+            task.Description = dto.Description;
+            task.IsCompleted = dto.IsCompleted;
+            // CreatedAt не меняется
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Tasks.Any(t => t.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return NoContent(); // Стандартный ответ для успешного PUT - 204 No Content
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
 
         // DELETE api/tasks/5
