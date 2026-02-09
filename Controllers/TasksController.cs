@@ -41,8 +41,13 @@ namespace TaskTrackerAPI.Controllers
 
         // POST api/tasks
         [HttpPost]
-        public async Task<ActionResult<TaskItem>> PostTask(TaskItem task)
+        public async Task<ActionResult<TaskItem>> PostTask(TaskCreateDto dto)
         {
+            var task = new TaskItem();
+            task.Title = dto.Title;
+            task.Description = dto.Description;
+            task.IsCompleted = false;
+            task.CreatedAt = DateTime.Now;
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
