@@ -75,3 +75,7 @@ coverage.ncov
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Build output
+bin/
+obj/
