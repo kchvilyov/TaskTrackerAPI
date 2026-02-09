@@ -1,23 +1,29 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавляем сервис OpenAPI (Swagger)
-builder.Services.AddOpenApi();
+// Добавляем сервисы для API и Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(); // Генерирует документ OpenAPI
 
 var app = builder.Build();
 
-// Включаем OpenAPI и Swagger UI в режиме разработки
+// Включаем HTTPS
+app.UseHttpsRedirection();
+
+// Настройка Swagger в режиме разработки
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi(); // Открывает /openapi.json
+    // Отдаёт JSON по адресу: /swagger/v1/swagger.json
+    app.UseSwagger();
+
+    // Подключает UI по адресу: /swagger
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/openapi.json", "v1");
-        options.RoutePrefix = "swagger"; // Доступ по /swagger
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskTrackerAPI v1");
+        options.RoutePrefix = "swagger"; // Доступ по http://localhost:5297/swagger
     });
 }
 
-app.UseHttpsRedirection();
-
+// Пример эндпоинта
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -38,6 +44,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
+// Запись для ответа
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
