@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskTrackerAPI.Data;
-using TaskTrackerAPI.Models;
 using TaskTrackerAPI.DTOs;
 
 namespace TaskTrackerAPI.Controllers
@@ -20,17 +19,33 @@ namespace TaskTrackerAPI.Controllers
 
         // GET: api/tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks()
         {
-            // Возвращает все задачи из БД
-            return await _context.Tasks.ToListAsync();
+            var tasks = await _context.Tasks
+                .Select(t => new TaskResponseDto(
+                    t.Id,
+                    t.Title,
+                    t.Description,
+                    t.IsCompleted,
+                    t.CreatedAt))
+                .ToListAsync();
+
+            return Ok(tasks);
         }
 
-        // GET api/tasks/5
+        // GET: api/tasks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskItem>> GetTask(int id)
+        public async Task<ActionResult<TaskResponseDto>> GetTask(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _context.Tasks
+                .Where(t => t.Id == id)
+                .Select(t => new TaskResponseDto(
+                    t.Id,
+                    t.Title,
+                    t.Description,
+                    t.IsCompleted,
+                    t.CreatedAt))
+                .FirstOrDefaultAsync();
 
             if (task == null)
             {
@@ -39,39 +54,50 @@ namespace TaskTrackerAPI.Controllers
             return task;
         }
 
-        // POST api/tasks
+        // POST: api/tasks
         [HttpPost]
-        public async Task<ActionResult<TaskItem>> PostTask(TaskCreateDto dto)
+        public async Task<ActionResult<TaskResponseDto>> PostTask(TaskCreateDto dto)
         {
-            var task = new TaskItem();
-            task.Title = dto.Title;
-            task.Description = dto.Description;
-            task.IsCompleted = false;
-            task.CreatedAt = DateTime.Now;
+            var task = new Models.TaskItem
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                IsCompleted = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
             // Стандартная практика: вернуть созданный объект и код 201 Created
-            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+            var responseDto = new TaskResponseDto(
+                task.Id,
+                task.Title,
+                task.Description,
+                task.IsCompleted,
+                task.CreatedAt);
+
+            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, responseDto);
         }
 
-        // PUT api/tasks/5
+        // PUT: api/tasks/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id, TaskUpdateDto dto)
         {
             var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return NotFound();
+            if (task == null)
+                return NotFound();
 
             task.Title = dto.Title;
             task.Description = dto.Description;
             task.IsCompleted = dto.IsCompleted;
-            // CreatedAt не меняется
+            // CreatedAt не изменяется
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // DELETE api/tasks/5
+        // DELETE: api/tasks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
