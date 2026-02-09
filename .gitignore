@@ -1,0 +1,77 @@
+﻿# Build results
+/[Dd]ebug/
+/[Dd]ebugPublic/
+/[Rr]elease/
+/[Rr]eleases/
+/[Pp]ublish/
+/bin/
+/obj/
+
+# NuGet packages
+*.nuget.props
+*.nuget.targets
+packages/
+NuGetPackages/
+*.nupkg
+!*.nuget.config
+!nuget.config
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio
+.vs/
+*.vsproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.iws
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# MSBuild
+!**/Properties/launchSettings.json
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+TEST-*.xml
+
+# Business Platform
+*.VisualState.xml
+TestResults/
+TRX00000?.trx
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+*.local
+
+# User-specific files
+*.user.ini
+
+# Coverage
+.coverage
+coverage.opencover.xml
+coverage.cobertura.xml
+coverage.ncov
+
+# Editor folders and files
+.DS_Store
+Thumbs.db
+desktop.ini
