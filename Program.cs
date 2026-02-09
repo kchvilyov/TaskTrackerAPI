@@ -1,8 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using TaskTrackerAPI.Data;
+using TaskTrackerAPI.Services;
+
+// C# (Program.cs) - аналог @Configuration в Spring
 var builder = WebApplication.CreateBuilder(args);
 
 // Добавляем сервисы для API и Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // Генерирует документ OpenAPI
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=tasks.db")); // Простая БД для демо
+
+builder.Services.AddScoped<TaskService>(); // Аналог @Service в Spring
 
 var app = builder.Build();
 
